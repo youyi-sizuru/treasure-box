@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="BaseTheme" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="materialButtonStyle">@style/ExButtonStyle</item>
+        <item name="editTextStyle">@style/ExEditTextStyle</item>
+        <item name="radioButtonStyle">@style/ExRadioButtonStyle</item>
+        <item name="android:ambientShadowAlpha" tools:ignore="NewApi">0.08</item>
+        <item name="android:spotShadowAlpha" tools:ignore="NewApi">0.08</item>
+    </style>
+</resources>

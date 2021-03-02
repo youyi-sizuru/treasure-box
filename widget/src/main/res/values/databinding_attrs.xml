@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="goneIf" format="reference" />
+    <attr name="goneIfNot" format="reference" />
+    <attr name="invisibleIf" format="reference" />
+    <attr name="invisibleIfNot" format="reference" />
+</resources>

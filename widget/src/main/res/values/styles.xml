@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ExButtonStyle" parent="Widget.MaterialComponents.Button" />
+
+    <style name="ExShapeAppearance">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">0dp</item>
+    </style>
+
+    <style name="ExShapeAppearance.Stadium">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="ExEditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="background">@null</item>
+    </style>
+
+    <style name="ExRadioButtonStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:button">@null</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:minWidth">0dp</item>
+    </style>
+
+    <style name="ExCardStyle" parent="Widget.MaterialComponents.CardView" />
+</resources>
