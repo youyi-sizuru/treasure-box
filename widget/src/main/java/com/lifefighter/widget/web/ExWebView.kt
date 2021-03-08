@@ -8,6 +8,12 @@ import android.webkit.WebView
  * @author xzp
  * @created on 2021/3/5.
  */
-class ExWebView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : WebView(context, attrs, defStyleAttr)
+class ExWebView : WebView {
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(
+        context,
+        attrs,
+        defStyle
+    )
+}

@@ -24,4 +24,8 @@
     </style>
 
     <style name="ExCardStyle" parent="Widget.MaterialComponents.CardView" />
+
+    <style name="ExEditStyle" parent="TextAppearance.AppCompat.Medium">
+
+    </style>
 </resources>

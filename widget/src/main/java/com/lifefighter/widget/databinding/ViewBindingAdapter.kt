@@ -8,7 +8,7 @@ import androidx.databinding.BindingAdapter
  * @author xzp
  * @created on 2020/10/23.
  */
-object DataBindingAdapter {
+object ViewBindingAdapter {
 
     @JvmStatic
     @BindingAdapter("goneIf")

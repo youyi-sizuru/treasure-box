@@ -1,10 +1,9 @@
 package com.lifefighter.utils
 
 import com.alibaba.fastjson.JSON
-import com.squareup.moshi.FromJson
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
+import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 
 
@@ -14,24 +13,16 @@ import java.lang.reflect.Type
  */
 
 object JsonUtils {
-    ///just for parse
-    val moshi: Moshi = Moshi.Builder()
-        .add(KotlinJsonAdapterFactory())
-        .add(StringToIntAdapter())
-        .build()
+    val gson = GsonBuilder().excludeFieldsWithModifiers(
+        Modifier.STATIC,
+        Modifier.TRANSIENT
+    ).create()
 
     fun newParameterizedType(
         rawType: Type,
         vararg typeArguments: Type
     ): Type {
-        return Types.newParameterizedType(rawType, *typeArguments)
-    }
-}
-
-class StringToIntAdapter {
-    @FromJson
-    fun fromJson(json: String?): Int? {
-        return json?.toIntOrNull()
+        return TypeToken.getParameterized(rawType, *typeArguments).type
     }
 }
 
@@ -69,8 +60,7 @@ fun <T : Any> String?.parseParameterizedJsonOrNull(
 ): T? {
     return this?.let {
         val type: Type = JsonUtils.newParameterizedType(rawType, *typeArguments)
-        val adapter = JsonUtils.moshi.adapter<T>(type).lenient()
-        adapter.fromJson(this)
+        JsonUtils.gson.fromJson<T>(this, type)
     }
 }
 
@@ -90,8 +80,9 @@ inline fun <reified T : Any> String?.parseMapJson(): Map<String, T> =
     ) ?: emptyMap()
 
 inline fun <reified T : Any> String.parseJsonOrNull(): T? {
-    val adapter = JsonUtils.moshi.adapter(T::class.java).lenient()
-    return adapter.fromJson(this)
+    return tryOrNull {
+        JsonUtils.gson.fromJson(this, T::class.java)
+    }
 }
 
 inline fun <reified T : Any> String.parseJson(): T {

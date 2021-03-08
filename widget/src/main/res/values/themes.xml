@@ -5,7 +5,15 @@
         <item name="materialButtonStyle">@style/ExButtonStyle</item>
         <item name="editTextStyle">@style/ExEditTextStyle</item>
         <item name="radioButtonStyle">@style/ExRadioButtonStyle</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColorSecondary">@color/dark</item>
+        <item name="android:textColorTertiary">@color/gray</item>
         <item name="android:ambientShadowAlpha" tools:ignore="NewApi">0.08</item>
         <item name="android:spotShadowAlpha" tools:ignore="NewApi">0.08</item>
+        <item name="android:listDivider">@drawable/vertical_divider</item>
+        <item name="android:colorControlNormal">@color/white</item>
+        <item name="android:statusBarColor">#40000000</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
+
 </resources>
