@@ -1,34 +1,82 @@
 package com.lifefighter.widget.adapter
 
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.annotation.IdRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.LifecycleOwner
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import androidx.recyclerview.widget.DiffUtil
+import com.chad.library.adapter.base.BaseBinderAdapter
+import com.chad.library.adapter.base.binder.QuickDataBindingItemBinder
 
 /**
  * @author xzp
  * @created on 2020/11/19.
  */
-class DataBindingAdapter<T, V : ViewDataBinding>(
-    layoutId: Int,
-    private val lifecycleOwner: LifecycleOwner? = null,
-    val bind: ((itemBinding: V, item: T) -> Unit)? = null
-) :
-    BaseQuickAdapter<T, BaseViewHolder>(layoutId) {
-    override fun onItemViewHolderCreated(viewHolder: BaseViewHolder, viewType: Int) {
-        DataBindingUtil.bind<V>(viewHolder.itemView)?.also {
+class DataBindingAdapter : BaseBinderAdapter() {
+    val isEmpty
+        get() = data.isEmpty()
+
+    inline fun <reified T : Any> addItemBinder(baseItemBinder: ViewItemBinder<T, *>): BaseBinderAdapter {
+        return addItemBinder(baseItemBinder, baseItemBinder.callback)
+    }
+}
+
+class ViewItemBinder<T, DB : ViewDataBinding>(
+    private val layoutIdProvider: (viewType: Int) -> Int,
+    var lifecycleOwner: LifecycleOwner? = null
+) : QuickDataBindingItemBinder<T, DB>() {
+    var callback: DiffUtil.ItemCallback<T>? = null
+    private val childClickMap = hashMapOf<Int, (DB, T, position: Int) -> Unit>()
+    var onItemClick: ((DB, T, position: Int) -> Unit)? = null
+
+    constructor(
+        layoutId: Int,
+        lifecycleOwner: LifecycleOwner? = null
+    ) : this(
+        layoutIdProvider =
+        { layoutId }, lifecycleOwner = lifecycleOwner
+    )
+
+    override fun convert(holder: BinderDataBindingHolder<DB>, data: T) {
+        holder.dataBinding.setVariable(DataBindingHelper.DEFAULT_BINDING_VARIABLE, data)
+    }
+
+    override fun onChildClick(
+        holder: BinderDataBindingHolder<DB>,
+        view: View,
+        data: T,
+        position: Int
+    ) {
+        childClickMap[view.id]?.invoke(holder.dataBinding, data, position)
+    }
+
+    override fun onClick(holder: BinderDataBindingHolder<DB>, view: View, data: T, position: Int) {
+        onItemClick?.invoke(holder.dataBinding, data, position)
+    }
+
+    fun addChildClick(@IdRes id: Int, click: (DB, T, position: Int) -> Unit) {
+        childClickMap[id] = click
+    }
+
+    override fun onCreateDataBinding(
+        layoutInflater: LayoutInflater,
+        parent: ViewGroup,
+        viewType: Int
+    ): DB {
+        return DataBindingUtil.inflate<DB>(
+            layoutInflater,
+            layoutIdProvider.invoke(viewType),
+            parent,
+            false
+        ).also {
             it.lifecycleOwner = lifecycleOwner
         }
     }
+}
 
-    override fun convert(holder: BaseViewHolder, item: T) {
-        DataBindingUtil.getBinding<V>(holder.itemView)?.also {
-            bind?.invoke(it, item)
-            it.executePendingBindings()
-        }
-    }
-
-    val isEmpty
-        get() = data.isEmpty()
+object DataBindingHelper {
+    var DEFAULT_BINDING_VARIABLE: Int = 0
 }
