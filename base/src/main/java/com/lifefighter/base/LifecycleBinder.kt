@@ -21,7 +21,6 @@ import com.lifefighter.utils.orFalse
 import com.lifefighter.utils.tryOrNull
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.Subscribe
-import org.koin.androidx.scope.lifecycleScope
 
 /**
  * @author xzp
@@ -33,7 +32,7 @@ interface LifecycleBinder<T : ViewDataBinding> : LifecycleOwner, CoroutineScope,
     val rootContext: Context
         get() = rootActivity
     val activityScope
-        get() = rootActivity.lifecycleScope
+        get() = rootActivity.scope
 
     val currentFragmentManager: FragmentManager
 
@@ -136,4 +135,5 @@ fun LifecycleBinder<*>.hideSoftKeyboard() {
     )
 }
 
-fun LifecycleBinder<*>.dp2px(dp: Int): Int = (rootContext.resources.displayMetrics.density * dp).toInt()
+fun LifecycleBinder<*>.dp2px(dp: Int): Int =
+    (rootContext.resources.displayMetrics.density * dp).toInt()

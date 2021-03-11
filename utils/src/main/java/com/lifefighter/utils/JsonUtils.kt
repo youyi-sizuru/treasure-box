@@ -2,7 +2,10 @@ package com.lifefighter.utils
 
 import com.alibaba.fastjson.JSON
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonIOException
 import com.google.gson.reflect.TypeToken
+import com.google.gson.stream.JsonToken
+import java.io.Reader
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 
@@ -24,6 +27,17 @@ object JsonUtils {
     ): Type {
         return TypeToken.getParameterized(rawType, *typeArguments).type
     }
+
+    fun <T> read(reader: Reader, type: Type): T? {
+        return gson.newJsonReader(reader).use {
+            val result: T? = gson.getAdapter(TypeToken.get(type)).read(it) as? T
+            if (it.peek() != JsonToken.END_DOCUMENT) {
+                throw JsonIOException("JSON document was not fully consumed.")
+            }
+            result
+        }
+    }
+
 }
 
 

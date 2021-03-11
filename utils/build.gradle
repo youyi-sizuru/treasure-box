@@ -32,7 +32,9 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation libraries.kotlinLibraries
     implementation libraries.androidXLibraries
-    implementation libraries.json
+    api libraries.json
     api libraries.eventBus
-    implementation libraries.logging
+    api libraries.logging
+    api libraries.koinLibraries
+    api libraries.httpLibraries
 }

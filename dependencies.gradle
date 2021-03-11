@@ -5,7 +5,7 @@ ext {
     targetSdkVersion = 29
     compileSdkVersion = 29
     kotlinVersion = "1.4.21"
-    koinVersion = "2.1.6"
+    koinVersion = "2.2.2"
     // dependencies
     libraries = [
             kotlinLibraries            : [
@@ -50,9 +50,10 @@ ext {
             imageCrop                  : "com.github.yalantis:ucrop:2.2.6",
             imageSelect                : "com.github.HuanTanSheng:EasyPhotos:3.0.6",
             httpLibraries              : [
-                    "com.squareup.okhttp3:okhttp:4.9.0",
+                    "com.squareup.okhttp3:okhttp:3.14.9",
                     "com.squareup.retrofit2:retrofit:2.9.0",
-                    "com.squareup.okhttp3:logging-interceptor:4.9.0",
+                    "com.squareup.okhttp3:logging-interceptor:3.14.9",
+                    "com.squareup.retrofit2:converter-gson:2.9.0",
             ],
             logging                    : "com.jakewharton.timber:timber:4.7.1",
             tab                        : "me.majiajie:pager-bottom-tab-strip:2.3.0X",

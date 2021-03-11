@@ -4,17 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.View
-import android.view.WindowManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentManager
+import org.koin.androidx.scope.ScopeActivity
 import kotlin.reflect.KClass
 
 /**
  * @author xzp
  * @created on 2020/10/19.
  */
-abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity(), LifecycleBinder<T> {
+abstract class BaseActivity<T : ViewDataBinding> : ScopeActivity(initialiseScope = false),
+    LifecycleBinder<T> {
     override val rootActivity: BaseActivity<*>
         get() = this
     private lateinit var innerViewBinding: T
