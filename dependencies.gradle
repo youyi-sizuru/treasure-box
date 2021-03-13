@@ -1,4 +1,3 @@
-
 ext {
     // Sdk and tools
     minSdkVersion = 21
@@ -63,5 +62,13 @@ ext {
                                           'com.netease.nimlib:superteam:8.1.0',
                                           'com.netease.nimlib:lucene:8.1.0',],
             rxpermissions              : 'com.github.tbruyelle:rxpermissions:0.12',
+            database                   : ["androidx.room:room-runtime:2.2.6",
+                                          "androidx.room:room-ktx:2.2.6"],
+            databaseCompiler           : "androidx.room:room-compiler",
+            refresh                    : [
+                    "com.scwang.smart:refresh-layout-kernel:2.0.3",
+                    "com.scwang.smart:refresh-header-classics:2.0.3",
+                    "com.scwang.smart:refresh-footer-classics:2.0.3",
+            ]
     ]
 }

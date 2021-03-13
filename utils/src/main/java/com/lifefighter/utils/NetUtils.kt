@@ -10,7 +10,7 @@ import org.koin.dsl.module
  * @created on 2021/3/9.
  */
 object NetUtils {
-    val netClientModule = module {
+    val module = module {
         single<OkHttpClient> {
             val logInterceptor = HttpLoggingInterceptor {
                 logDebug(it)

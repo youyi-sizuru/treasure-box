@@ -40,4 +40,5 @@ dependencies {
     api libraries.datePicker
     api libraries.tab
     api libraries.adapterHelper
+    api libraries.refresh
 }
