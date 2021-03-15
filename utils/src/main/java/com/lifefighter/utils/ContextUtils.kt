@@ -1,7 +1,9 @@
 package com.lifefighter.utils
 
+import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
+import android.content.ContextWrapper
 
 /**
  * @author xzp
@@ -20,4 +22,18 @@ fun Context.isMainProcess(): Boolean {
         }
     }
     return false
+}
+
+fun Context.getRootActivity(): Activity? {
+    return when (this) {
+        is Activity -> {
+            this
+        }
+        is ContextWrapper -> {
+            this.baseContext.getRootActivity()
+        }
+        else -> {
+            null
+        }
+    }
 }

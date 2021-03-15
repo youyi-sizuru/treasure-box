@@ -32,9 +32,21 @@
         <item name="android:minWidth">0dp</item>
     </style>
 
-    <style name="ExCardStyle" parent="Widget.MaterialComponents.CardView" />
+    <style name="ExCardStyle" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/white</item>
+        <item name="cardElevation">0dp</item>
+    </style>
 
     <style name="ExEditStyle" parent="TextAppearance.AppCompat.Medium">
 
+    </style>
+
+    <style name="ExToolbarStyle" parent="Widget.MaterialComponents.Toolbar">
+        <item name="navigationIcon">?homeAsUpIndicator</item>
+        <item name="android:background">?colorPrimary</item>
+        <item name="titleTextColor">@color/white</item>
+        <item name="android:minHeight">?actionBarSize</item>
+        <item name="maxButtonHeight">?actionBarSize</item>
+        <item name="navigationToFinish">true</item>
     </style>
 </resources>

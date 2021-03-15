@@ -43,7 +43,6 @@ class ViewItemBinder<T, DB : ViewDataBinding>(
 
     override fun convert(holder: BinderDataBindingHolder<DB>, data: T) {
         holder.dataBinding.setVariable(DataBindingHelper.DEFAULT_BINDING_VARIABLE, data)
-        holder.dataBinding.executePendingBindings()
     }
 
     override fun onChildClick(
