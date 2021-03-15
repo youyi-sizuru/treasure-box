@@ -39,4 +39,5 @@ dependencies {
     implementation libraries.androidXLibraries
     implementation libraries.koinLibraries
     implementation project(":utils")
+    implementation project(":widget")
 }

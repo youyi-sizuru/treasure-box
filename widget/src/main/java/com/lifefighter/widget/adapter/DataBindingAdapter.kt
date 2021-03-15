@@ -26,22 +26,24 @@ class DataBindingAdapter : BaseBinderAdapter() {
 
 class ViewItemBinder<T, DB : ViewDataBinding>(
     private val layoutIdProvider: (viewType: Int) -> Int,
-    var lifecycleOwner: LifecycleOwner? = null
+    private val lifecycleOwner: LifecycleOwner,
+    val callback: DiffUtil.ItemCallback<T>? = null
 ) : QuickDataBindingItemBinder<T, DB>() {
-    var callback: DiffUtil.ItemCallback<T>? = null
+
     private val childClickMap = hashMapOf<Int, (DB, T, position: Int) -> Unit>()
     var onItemClick: ((DB, T, position: Int) -> Unit)? = null
 
     constructor(
         layoutId: Int,
-        lifecycleOwner: LifecycleOwner? = null
+        lifecycleOwner: LifecycleOwner,
+        callback: DiffUtil.ItemCallback<T>? = null
     ) : this(
-        layoutIdProvider =
-        { layoutId }, lifecycleOwner = lifecycleOwner
+        layoutIdProvider = { layoutId }, lifecycleOwner = lifecycleOwner, callback = callback
     )
 
     override fun convert(holder: BinderDataBindingHolder<DB>, data: T) {
         holder.dataBinding.setVariable(DataBindingHelper.DEFAULT_BINDING_VARIABLE, data)
+        holder.dataBinding.executePendingBindings()
     }
 
     override fun onChildClick(
@@ -59,6 +61,7 @@ class ViewItemBinder<T, DB : ViewDataBinding>(
 
     fun addChildClick(@IdRes id: Int, click: (DB, T, position: Int) -> Unit) {
         childClickMap[id] = click
+        addChildClickViewIds(id)
     }
 
     override fun onCreateDataBinding(
@@ -78,5 +81,5 @@ class ViewItemBinder<T, DB : ViewDataBinding>(
 }
 
 object DataBindingHelper {
-    var DEFAULT_BINDING_VARIABLE: Int = 0
+    var DEFAULT_BINDING_VARIABLE: Int = -1
 }
