@@ -15,62 +15,63 @@ object LogUtils {
     }
 }
 
-fun logVerbose(throwable: Throwable, message: String? = null) {
-    if (message == null) {
-        Timber.v(throwable)
-    } else {
-        Timber.v(throwable, message)
+
+fun logVerbose(message: String? = null, throwable: Throwable? = null) {
+    if (throwable != null) {
+        if (message != null) {
+            Timber.v(throwable, message)
+        } else {
+            Timber.v(throwable)
+        }
+    } else if (message != null) {
+        Timber.v(message)
     }
 }
 
-fun logDebug(throwable: Throwable, message: String? = null) {
-    if (message == null) {
-        Timber.d(throwable)
-    } else {
-        Timber.d(throwable, message)
+fun logDebug(message: String? = null, throwable: Throwable? = null) {
+    if (throwable != null) {
+        if (message != null) {
+            Timber.d(throwable, message)
+        } else {
+            Timber.d(throwable)
+        }
+    } else if (message != null) {
+        Timber.d(message)
     }
 }
 
-fun logInfo(throwable: Throwable, message: String? = null) {
-    if (message == null) {
-        Timber.i(throwable)
-    } else {
-        Timber.i(throwable, message)
+fun logInfo(message: String? = null, throwable: Throwable? = null) {
+    if (throwable != null) {
+        if (message != null) {
+            Timber.i(throwable, message)
+        } else {
+            Timber.i(throwable)
+        }
+    } else if (message != null) {
+        Timber.i(message)
     }
 }
 
-fun logError(throwable: Throwable, message: String? = null) {
-    if (message == null) {
-        Timber.e(throwable)
-    } else {
-        Timber.e(throwable, message)
+fun logError(message: String? = null, throwable: Throwable? = null) {
+    if (throwable != null) {
+        if (message != null) {
+            Timber.e(throwable, message)
+        } else {
+            Timber.e(throwable)
+        }
+    } else if (message != null) {
+        Timber.e(message)
     }
 }
 
-fun logWarn(throwable: Throwable, message: String? = null) {
-    if (message == null) {
-        Timber.w(throwable)
-    } else {
-        Timber.w(throwable, message)
+fun logWarn(message: String? = null, throwable: Throwable? = null) {
+    if (throwable != null) {
+        if (message != null) {
+            Timber.w(throwable, message)
+        } else {
+            Timber.w(throwable)
+        }
+    } else if (message != null) {
+        Timber.w(message)
     }
-}
-
-fun logVerbose(message: String) {
-    Timber.v(message)
-}
-
-fun logDebug(message: String) {
-    Timber.d(message)
-}
-
-fun logInfo(message: String) {
-    Timber.i(message)
-}
-
-fun logError(message: String) {
-    Timber.e(message)
-}
-
-fun logWarn(message: String) {
-    Timber.w(message)
 }
