@@ -6,6 +6,7 @@ import android.os.Parcelable
 import android.view.View
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentManager
+import com.lifefighter.base.Const.BUNDLE_NAME
 import org.koin.androidx.scope.ScopeActivity
 import kotlin.reflect.KClass
 
@@ -55,7 +56,7 @@ abstract class BaseActivity<T : ViewDataBinding> : ScopeActivity(initialiseScope
     override fun route(kClass: KClass<*>, parcelable: Parcelable?, requestCode: Int?) {
         val intent = Intent(this, kClass.java)
         if (parcelable != null) {
-            intent.putExtra("bundle", parcelable)
+            intent.putExtra(BUNDLE_NAME, parcelable)
         }
         if (requestCode == null) {
             startActivity(intent)
@@ -70,6 +71,6 @@ abstract class BaseActivity<T : ViewDataBinding> : ScopeActivity(initialiseScope
     }
 
     override fun <T : Parcelable> getBundleNullable(): T? {
-        return intent.getParcelableExtra("bundle")
+        return intent.getParcelableExtra(BUNDLE_NAME)
     }
 }

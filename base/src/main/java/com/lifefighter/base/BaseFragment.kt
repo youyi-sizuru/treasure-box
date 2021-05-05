@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.lifefighter.base.Const.BUNDLE_NAME
 import kotlin.reflect.KClass
 
 /**
@@ -70,7 +71,7 @@ abstract class BaseFragment<T : ViewDataBinding> : Fragment(), LifecycleBinder<T
     override fun route(kClass: KClass<*>, parcelable: Parcelable?, requestCode: Int?) {
         val intent = Intent(this.rootActivity, kClass.java)
         if (parcelable != null) {
-            intent.putExtra("bundle", parcelable)
+            intent.putExtra(BUNDLE_NAME, parcelable)
         }
         if (requestCode == null) {
             startActivity(intent)
@@ -80,7 +81,7 @@ abstract class BaseFragment<T : ViewDataBinding> : Fragment(), LifecycleBinder<T
     }
 
     override fun <T : Parcelable> getBundleNullable(): T? {
-        return arguments?.getParcelable("bundle")
+        return arguments?.getParcelable(BUNDLE_NAME)
     }
 
 }

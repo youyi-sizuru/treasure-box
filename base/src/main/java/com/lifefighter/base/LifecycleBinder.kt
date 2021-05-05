@@ -1,9 +1,10 @@
 package com.lifefighter.base
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -17,6 +18,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.coroutineScope
 import com.lifefighter.utils.EventBusManager
+import com.lifefighter.utils.logError
 import com.lifefighter.utils.orFalse
 import com.lifefighter.utils.tryOrNull
 import kotlinx.coroutines.*
@@ -96,18 +98,18 @@ interface LifecycleBinder<T : ViewDataBinding> : LifecycleOwner, CoroutineScope,
                 task()
             } catch (throwable: Throwable) {
                 if (throwable !is CancellationException) {
-                    Log.e("LifecycleBinder", "launch run error", throwable)
+                    logError("launch run error", throwable)
                     try {
                         failure?.invoke(throwable)
                     } catch (t: Throwable) {
-                        Log.e("LifecycleBinder", "launch failure error", throwable)
+                        logError("launch failure error", throwable)
                     }
                 }
             } finally {
                 try {
                     final?.invoke()
                 } catch (throwable: Throwable) {
-                    Log.e("LifecycleBinder", "launch final error", throwable)
+                    logError("launch final error", throwable)
                 }
             }
         }
@@ -137,3 +139,13 @@ fun LifecycleBinder<*>.hideSoftKeyboard() {
 
 fun LifecycleBinder<*>.dp2px(dp: Int): Int =
     (rootContext.resources.displayMetrics.density * dp).toInt()
+
+
+fun <T : Parcelable> Intent.getBundle(): T {
+    return this.getParcelableExtra(Const.BUNDLE_NAME)
+        ?: throw RuntimeException("can't get bundle, please use getBundleNullable")
+}
+
+fun <T : Parcelable> Intent.getBundleOrNull(): T? {
+    return this.getParcelableExtra(Const.BUNDLE_NAME)
+}
