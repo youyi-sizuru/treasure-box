@@ -73,4 +73,10 @@ abstract class BaseActivity<T : ViewDataBinding> : ScopeActivity(initialiseScope
     override fun <T : Parcelable> getBundleNullable(): T? {
         return intent.getParcelableExtra(BUNDLE_NAME)
     }
+
+    fun setParcelableResult(parcelable: Parcelable) {
+        setResult(RESULT_OK, Intent().apply {
+            putExtra(BUNDLE_NAME, parcelable)
+        })
+    }
 }

@@ -1,5 +1,6 @@
 package com.lifefighter.base
 
+import android.content.Intent
 import android.os.Parcelable
 import kotlin.reflect.KClass
 
