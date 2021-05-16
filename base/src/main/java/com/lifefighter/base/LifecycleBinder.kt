@@ -11,12 +11,14 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.coroutineScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.lifefighter.utils.EventBusManager
 import com.lifefighter.utils.logError
 import com.lifefighter.utils.orFalse
@@ -148,4 +150,20 @@ fun <T : Parcelable> Intent.getBundle(): T {
 
 fun <T : Parcelable> Intent.getBundleOrNull(): T? {
     return this.getParcelableExtra(Const.BUNDLE_NAME)
+}
+
+fun LifecycleBinder<*>.alert(
+    title: CharSequence? = null,
+    message: CharSequence? = null,
+    positiveText: CharSequence? = null,
+    negativeText: CharSequence? = null,
+    negativeCallback: (() -> Unit)? = null,
+    positiveCallback: (() -> Unit)? = null
+): AlertDialog {
+    return MaterialAlertDialogBuilder(rootContext).setTitle(title).setMessage(message)
+        .setPositiveButton(positiveText) { _, _ ->
+            positiveCallback?.invoke()
+        }.setNegativeButton(negativeText) { _, _ ->
+            negativeCallback?.invoke()
+        }.show()
 }
