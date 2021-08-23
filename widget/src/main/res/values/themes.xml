@@ -17,6 +17,7 @@
         <item name="android:actionMenuTextColor">@color/white</item>
         <item name="toolbarStyle">@style/ExToolbarStyle</item>
         <item name="materialCardViewStyle">@style/ExCardStyle</item>
+        <item name="materialAlertDialogTheme">@style/Theme.MaterialComponents.Light.Dialog.Alert</item>
     </style>
 
 </resources>
