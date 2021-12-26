@@ -11,11 +11,8 @@ import java.util.*
  * @created on 2021/12/25.
  */
 abstract class CanvasWallpaperService : WallpaperService() {
-    private var canvasEngine: CanvasEngine? = null
     override fun onCreateEngine(): Engine {
-        return CanvasEngine().also {
-            canvasEngine = it
-        }
+        return CanvasEngine()
     }
 
     abstract fun onDraw(canvas: Canvas)
@@ -32,12 +29,32 @@ abstract class CanvasWallpaperService : WallpaperService() {
             }
         }
 
+        override fun onVisibilityChanged(visible: Boolean) {
+            super.onVisibilityChanged(visible)
+            if (visible) {
+                startInvalidate()
+            } else {
+                endInvalidate()
+            }
+        }
+
+        private fun startInvalidate() {
+            if (looperTimer == null) {
+                looperTimer = Timer().also {
+                    it.schedule(invalidateTask, 0, 50)
+                }
+            }
+        }
+
+        private fun endInvalidate() {
+            looperTimer?.cancel()
+            looperTimer?.purge()
+            looperTimer = null
+        }
+
         override fun onSurfaceCreated(holder: SurfaceHolder) {
             cacheSurfaceHolder = holder
-            looperTimer = Timer().also {
-                it.schedule(invalidateTask, 0, 100)
-            }
-
+            startInvalidate()
         }
 
         override fun onSurfaceChanged(
@@ -51,9 +68,7 @@ abstract class CanvasWallpaperService : WallpaperService() {
 
         override fun onSurfaceDestroyed(holder: SurfaceHolder) {
             cacheSurfaceHolder = null
-            looperTimer?.cancel()
-            looperTimer?.purge()
-            looperTimer = null
+            endInvalidate()
         }
     }
 }
