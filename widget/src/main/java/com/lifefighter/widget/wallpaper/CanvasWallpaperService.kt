@@ -10,33 +10,27 @@ import java.util.*
  * @author xzp
  * @created on 2021/12/25.
  */
-abstract class CanvasWallpaperService : WallpaperService() {
+abstract class CanvasWallpaperService : WallpaperService(), CanvasPainter {
     override fun onCreateEngine(): Engine {
-        return CanvasEngine()
+        return CanvasEngine(providerPainter())
     }
 
-    abstract fun onDraw(canvas: Canvas)
+    protected open fun providerPainter(): CanvasPainter {
+        return this
+    }
 
-    inner class CanvasEngine : Engine() {
+    private inner class CanvasEngine(private val painter: CanvasPainter) : Engine() {
         private var cacheSurfaceHolder: SurfaceHolder? = null
         private var looperTimer: Timer? = null
         private val invalidateTask = object : TimerTask() {
             override fun run() {
                 val holder = cacheSurfaceHolder ?: return
                 val canvas = holder.lockCanvas()
-                onDraw(canvas)
+                painter.onDraw(canvas)
                 holder.unlockCanvasAndPost(canvas)
             }
         }
 
-        override fun onVisibilityChanged(visible: Boolean) {
-            super.onVisibilityChanged(visible)
-            if (visible) {
-                startInvalidate()
-            } else {
-                endInvalidate()
-            }
-        }
 
         private fun startInvalidate() {
             if (looperTimer == null) {
@@ -66,9 +60,31 @@ abstract class CanvasWallpaperService : WallpaperService() {
             cacheSurfaceHolder = holder
         }
 
+        override fun onOffsetsChanged(
+            xOffset: Float,
+            yOffset: Float,
+            xOffsetStep: Float,
+            yOffsetStep: Float,
+            xPixelOffset: Int,
+            yPixelOffset: Int
+        ) {
+            painter.onOffset(xOffset.div(xOffsetStep), yOffset.div(yOffsetStep))
+        }
+
         override fun onSurfaceDestroyed(holder: SurfaceHolder) {
             cacheSurfaceHolder = null
             endInvalidate()
         }
     }
+}
+
+interface CanvasPainter {
+    fun onDraw(canvas: Canvas)
+
+    /**
+     * 屏幕偏移时触发
+     * [xOffset] 主屏幕x轴的偏移量，假设主屏幕有5个，现在停留在第3个，则为2
+     * [yOffset] 主屏幕y轴的偏移量，解释与xOffset同理
+     */
+    fun onOffset(xOffset: Float, yOffset: Float)
 }
