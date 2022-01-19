@@ -72,6 +72,7 @@ ext {
                     "com.scwang.smart:refresh-layout-kernel:2.0.3",
                     "com.scwang.smart:refresh-header-classics:2.0.3",
                     "com.scwang.smart:refresh-footer-classics:2.0.3",
-            ]
+            ],
+            mmkv                       : 'com.tencent:mmkv:1.2.12',
     ]
 }
