@@ -12,11 +12,7 @@ import java.util.*
  */
 abstract class CanvasWallpaperService : WallpaperService(), CanvasPainter {
     override fun onCreateEngine(): Engine {
-        return CanvasEngine(providerPainter())
-    }
-
-    protected open fun providerPainter(): CanvasPainter {
-        return this
+        return CanvasEngine(this)
     }
 
     private inner class CanvasEngine(private val painter: CanvasPainter) : Engine() {
@@ -35,7 +31,7 @@ abstract class CanvasWallpaperService : WallpaperService(), CanvasPainter {
         private fun startInvalidate() {
             if (looperTimer == null) {
                 looperTimer = Timer().also {
-                    it.schedule(invalidateTask, 0, 50)
+                    it.schedule(invalidateTask, 0, 20)
                 }
             }
         }

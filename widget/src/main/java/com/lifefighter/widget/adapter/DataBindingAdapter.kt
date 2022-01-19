@@ -27,6 +27,7 @@ class DataBindingAdapter : BaseBinderAdapter() {
 class ViewItemBinder<T, DB : ViewDataBinding>(
     private val layoutIdProvider: (viewType: Int) -> Int,
     private val lifecycleOwner: LifecycleOwner,
+    private val customConvert: ((DB, T) -> Unit)? = null,
     val callback: DiffUtil.ItemCallback<T>? = null
 ) : QuickDataBindingItemBinder<T, DB>() {
 
@@ -36,13 +37,19 @@ class ViewItemBinder<T, DB : ViewDataBinding>(
     constructor(
         layoutId: Int,
         lifecycleOwner: LifecycleOwner,
+        customConvert: ((DB, T) -> Unit)? = null,
         callback: DiffUtil.ItemCallback<T>? = null
     ) : this(
-        layoutIdProvider = { layoutId }, lifecycleOwner = lifecycleOwner, callback = callback
+        layoutIdProvider = { layoutId },
+        lifecycleOwner = lifecycleOwner,
+        customConvert = customConvert,
+        callback = callback
     )
 
     override fun convert(holder: BinderDataBindingHolder<DB>, data: T) {
         holder.dataBinding.setVariable(DataBindingHelper.DEFAULT_BINDING_VARIABLE, data)
+        holder.dataBinding.executePendingBindings()
+        customConvert?.invoke(holder.dataBinding, data)
     }
 
     override fun onChildClick(
