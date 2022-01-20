@@ -3,6 +3,7 @@ package com.lifefighter.widget.wallpaper
 import android.graphics.Canvas
 import android.service.wallpaper.WallpaperService
 import android.view.SurfaceHolder
+import com.lifefighter.utils.tryOrNothing
 import java.util.*
 
 /**
@@ -21,9 +22,11 @@ abstract class CanvasWallpaperService : WallpaperService(), CanvasPainter {
         private val invalidateTask = object : TimerTask() {
             override fun run() {
                 val holder = cacheSurfaceHolder ?: return
-                val canvas = holder.lockCanvas()
-                painter.onDraw(canvas)
-                holder.unlockCanvasAndPost(canvas)
+                tryOrNothing {
+                    val canvas = holder.lockCanvas()
+                    painter.onDraw(canvas)
+                    holder.unlockCanvasAndPost(canvas)
+                }
             }
         }
 
@@ -64,7 +67,9 @@ abstract class CanvasWallpaperService : WallpaperService(), CanvasPainter {
             xPixelOffset: Int,
             yPixelOffset: Int
         ) {
-            painter.onOffset(xOffset.div(xOffsetStep), yOffset.div(yOffsetStep))
+            if (xOffsetStep != 0f && yOffsetStep != 0f) {
+                painter.onOffset(xOffset.div(xOffsetStep), yOffset.div(yOffsetStep))
+            }
         }
 
         override fun onSurfaceDestroyed(holder: SurfaceHolder) {
