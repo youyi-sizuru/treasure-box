@@ -76,8 +76,11 @@ abstract class CanvasWallpaperService : WallpaperService(), CanvasPainter {
             xPixelOffset: Int,
             yPixelOffset: Int
         ) {
-            if (xOffsetStep != 0f && yOffsetStep != 0f) {
-                painter.onOffset(xOffset.div(xOffsetStep), yOffset.div(yOffsetStep))
+            if (xOffsetStep != 0f || yOffsetStep != 0f) {
+                painter.onOffset(
+                    if (xOffsetStep == 0f) 0f else xOffset.div(xOffsetStep),
+                    if (yOffsetStep == 0f) 0f else yOffset.div(yOffsetStep)
+                )
             }
         }
 
