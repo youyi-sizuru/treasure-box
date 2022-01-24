@@ -45,6 +45,15 @@ abstract class CanvasWallpaperService : WallpaperService(), CanvasPainter {
             looperTimer = null
         }
 
+        override fun onVisibilityChanged(visible: Boolean) {
+            super.onVisibilityChanged(visible)
+            if (visible) {
+                painter.onResume()
+            } else {
+                painter.onPause()
+            }
+        }
+
         override fun onSurfaceCreated(holder: SurfaceHolder) {
             cacheSurfaceHolder = holder
             startInvalidate()
@@ -80,12 +89,18 @@ abstract class CanvasWallpaperService : WallpaperService(), CanvasPainter {
 }
 
 interface CanvasPainter {
-    fun onDraw(canvas: Canvas)
+    fun onDraw(canvas: Canvas) {}
 
     /**
      * 屏幕偏移时触发
      * [xOffset] 主屏幕x轴的偏移量，假设主屏幕有5个，现在停留在第3个，则为2
      * [yOffset] 主屏幕y轴的偏移量，解释与xOffset同理
      */
-    fun onOffset(xOffset: Float, yOffset: Float)
+    fun onOffset(xOffset: Float, yOffset: Float) {}
+
+    fun onResume() {}
+
+    fun onPause() {}
+
+
 }
