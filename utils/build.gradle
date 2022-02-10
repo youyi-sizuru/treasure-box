@@ -37,4 +37,5 @@ dependencies {
     api libraries.logging
     api libraries.koinLibraries
     api libraries.httpLibraries
+    implementation libraries.mmkv
 }

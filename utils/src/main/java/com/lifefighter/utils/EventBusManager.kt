@@ -27,6 +27,10 @@ object EventBusManager {
 
     fun postSticky(event: Any) = eventBus.postSticky(event)
 
+    fun <T : Any> getStickyEvent(event: KClass<T>) = eventBus.getStickyEvent(event.java)
+
+    fun isStickyEventAlive(event: KClass<*>) = eventBus.getStickyEvent(event.java) != null
+
     fun removeStickyEvent(event: Any) = eventBus.removeStickyEvent(event)
 
     fun removeAllStickyEvents() = eventBus.removeAllStickyEvents()

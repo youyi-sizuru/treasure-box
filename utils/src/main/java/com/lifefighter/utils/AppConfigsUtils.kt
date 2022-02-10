@@ -1,43 +1,43 @@
 package com.lifefighter.utils
 
 import android.app.Application
-import android.content.Context
-import android.content.SharedPreferences
+import com.tencent.mmkv.MMKV
+import com.tencent.mmkv.MMKVLogLevel
 
 /**
  * @author xzp
  * @created on 2020/10/23.
  */
 object AppConfigsUtils {
-    private var sharedPreferences: SharedPreferences? = null
-
-
     fun init(application: Application, name: String = "app_configs") {
-        sharedPreferences = application.getSharedPreferences(name, Context.MODE_PRIVATE)
+        MMKV.initialize(
+            application,
+            if (BuildConfig.DEBUG) MMKVLogLevel.LevelInfo else MMKVLogLevel.LevelError
+        )
     }
 
     fun putBoolean(name: String, value: Boolean) {
-        getSp().edit().putBoolean(name, value).apply()
+        getSp().encode(name, value)
     }
 
     fun getBoolean(name: String, defaultValue: Boolean): Boolean {
-        return getSp().getBoolean(name, defaultValue)
+        return getSp().decodeBool(name, defaultValue)
     }
 
     fun putString(name: String, value: String?) {
-        getSp().edit().putString(name, value).apply()
+        getSp().encode(name, value)
     }
 
     fun getString(name: String, defaultValue: String?): String? {
-        return getSp().getString(name, defaultValue)
+        return getSp().decodeString(name, defaultValue)
     }
 
     fun remove(name: String) {
-        getSp().edit().remove(name).apply()
+        getSp().removeValueForKey(name)
     }
 
-    private fun getSp(): SharedPreferences {
-        return sharedPreferences ?: throw RuntimeException("AppConfigsUtils must call init first!")
+    private fun getSp(): MMKV {
+        return MMKV.defaultMMKV()
     }
 }
 
