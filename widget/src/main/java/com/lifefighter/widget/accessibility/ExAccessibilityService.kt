@@ -9,36 +9,60 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.CallSuper
 import com.lifefighter.utils.getBoundsInScreen
+import com.lifefighter.utils.tryOrNothing
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import java.util.concurrent.atomic.AtomicReference
+import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
 /**
  * @author xzp
  * @created on 2022/2/10.
  */
-abstract class ExAccessibilityService : AccessibilityService() {
-    private var mSafeTime: Long = 0L
+abstract class ExAccessibilityService : AccessibilityService(), CoroutineScope {
+    private val mCoroutineContextRef = AtomicReference<CoroutineContext?>()
+    private var mInterrupt: Boolean = false
+    override val coroutineContext: CoroutineContext
+        get() {
+            while (true) {
+                val existing = mCoroutineContextRef.get()
+                if (existing != null) {
+                    return existing
+                }
+                val newContext = SupervisorJob() + Dispatchers.Main.immediate
+                if (mInterrupt) {
+                    newContext.cancel()
+                }
+                if (mCoroutineContextRef.compareAndSet(null, newContext)) {
+                    return newContext
+                }
+            }
+        }
+
     override fun onServiceConnected() {
+        mInterrupt = false
         onStart()
     }
 
     override fun onInterrupt() {
         onStop()
+        mInterrupt = true
+        tryOrNothing {
+            mCoroutineContextRef.get()?.cancel()
+            mCoroutineContextRef.lazySet(null)
+        }
     }
 
-    abstract fun onStart()
-    abstract fun onStop()
+    open fun onStart() {}
+    open fun onStop() {}
     abstract fun onReceiveEvent(event: AccessibilityEvent?)
 
     @CallSuper
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        //2秒的保护机制
-        if (System.currentTimeMillis() - mSafeTime > 2000) {
-            onReceiveEvent(event)
-        }
-    }
-
-    fun keepSafe() {
-        mSafeTime = System.currentTimeMillis()
+        onReceiveEvent(event)
     }
 
     @TargetApi(Build.VERSION_CODES.N)

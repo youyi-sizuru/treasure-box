@@ -75,5 +75,8 @@ ext {
                     "com.scwang.smart:refresh-footer-classics:2.0.3",
             ],
             mmkv                       : 'com.tencent:mmkv:1.2.12',
+            floatWindow                : [
+                    "com.github.princekin-f:EasyFloat:2.0.4"
+            ],
     ]
 }

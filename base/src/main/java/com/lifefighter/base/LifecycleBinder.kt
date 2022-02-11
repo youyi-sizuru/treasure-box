@@ -87,38 +87,9 @@ interface LifecycleBinder<T : ViewDataBinding> : LifecycleOwner, CoroutineScope,
     }
 
     override val coroutineContext get() = lifecycle.coroutineScope.coroutineContext
-
-    fun launch(
-        prepare: (suspend () -> Unit)? = null,
-        failure: (suspend (t: Throwable) -> Unit)? = null,
-        final: (suspend () -> Unit)? = null,
-        task: suspend CoroutineScope.() -> Unit
-    ): Job {
-        return this.launch(ignoreErrorHandler) {
-            try {
-                prepare?.invoke()
-                task()
-            } catch (throwable: Throwable) {
-                if (throwable !is CancellationException) {
-                    logError("launch run error", throwable)
-                    try {
-                        failure?.invoke(throwable)
-                    } catch (t: Throwable) {
-                        logError("launch failure error", throwable)
-                    }
-                }
-            } finally {
-                try {
-                    final?.invoke()
-                } catch (throwable: Throwable) {
-                    logError("launch final error", throwable)
-                }
-            }
-        }
-    }
 }
 
-private val ignoreErrorHandler = CoroutineExceptionHandler { _, _ -> }
+
 
 fun LifecycleBinder<*>.color(@ColorRes colorId: Int): Int {
     return ContextCompat.getColor(rootContext, colorId)

@@ -97,6 +97,9 @@ fun AccessibilityNodeInfo.findFirstAccessibilityNodeInfoByText(text: String): Ac
     return this.findAccessibilityNodeInfosByText(text).firstOrNull()
 }
 
+fun AccessibilityNodeInfo.findFirstAccessibilityNodeInfoByViewId(viewId: String): AccessibilityNodeInfo? {
+    return this.findAccessibilityNodeInfosByViewId(viewId).firstOrNull()
+}
 fun AccessibilityNodeInfo.getBoundsInScreen(): Rect {
     val bounds = Rect()
     this.getBoundsInScreen(bounds)
