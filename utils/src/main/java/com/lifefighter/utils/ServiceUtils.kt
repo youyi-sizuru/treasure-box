@@ -2,10 +2,18 @@ package com.lifefighter.utils
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo.FEEDBACK_GENERIC
+import android.app.Service
+import android.content.ComponentName
 import android.content.Context
+import android.content.ServiceConnection
 import android.graphics.Rect
+import android.os.*
 import android.view.accessibility.AccessibilityManager
 import android.view.accessibility.AccessibilityNodeInfo
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import kotlinx.coroutines.channels.Channel
 import kotlin.reflect.KClass
 
 /**
@@ -100,8 +108,74 @@ fun AccessibilityNodeInfo.findFirstAccessibilityNodeInfoByText(text: String): Ac
 fun AccessibilityNodeInfo.findFirstAccessibilityNodeInfoByViewId(viewId: String): AccessibilityNodeInfo? {
     return this.findAccessibilityNodeInfosByViewId(viewId).firstOrNull()
 }
+
 fun AccessibilityNodeInfo.getBoundsInScreen(): Rect {
     val bounds = Rect()
     this.getBoundsInScreen(bounds)
     return bounds
 }
+
+class ServiceConnectionWithMessenger : ServiceConnection {
+    private var mService: Messenger? = null
+    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+        mService = Messenger(service)
+    }
+
+    override fun onServiceDisconnected(name: ComponentName?) {
+        mService = null
+    }
+
+    fun sendMessage(message: Message) {
+        mService?.send(message)
+    }
+}
+
+
+class MessengerBinder(lifecycleOwner: LifecycleOwner, callback: Handler.Callback) : Binder() {
+    private val mThread = HandlerThread("MessengerBinder-${nextThreadNum()}")
+    private var mHandler: Handler? = null
+
+    init {
+        lifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_CREATE) {
+                mThread.start()
+                mHandler = Handler(mThread.looper, callback)
+            } else if (event == Lifecycle.Event.ON_DESTROY) {
+                mHandler = null
+                mThread.quitSafely()
+            }
+        })
+    }
+
+    companion object {
+        var threadInitNumber = 0
+
+        @Synchronized
+        fun nextThreadNum(): Int {
+            return threadInitNumber++
+        }
+    }
+}
+
+class ServiceConnectionWithService : ServiceConnection {
+    private var mChannel = Channel<Service>(Channel.CONFLATED)
+    override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
+        tryOrNothing {
+            val service = (binder as? ServiceBinder)?.service
+            if (service != null) {
+                mChannel.offer(service)
+            }
+        }
+
+    }
+
+    override fun onServiceDisconnected(name: ComponentName?) {
+        tryOrNothing {
+            mChannel.close()
+        }
+    }
+
+    suspend fun getService() = mChannel.receive()
+}
+
+class ServiceBinder(val service: Service) : Binder()

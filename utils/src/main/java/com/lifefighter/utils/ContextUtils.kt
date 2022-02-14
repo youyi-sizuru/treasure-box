@@ -2,14 +2,19 @@ package com.lifefighter.utils
 
 import android.app.Activity
 import android.app.ActivityManager
+import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
+import android.os.Build
 
 /**
  * @author xzp
  * @created on 2020/11/20.
  */
 fun Context.isMainProcess(): Boolean {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        return Application.getProcessName() == packageName
+    }
     val am = getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager ?: return false
     val infos = am.runningAppProcesses
     if (infos.isNullOrEmpty()) {
