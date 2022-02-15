@@ -1,5 +1,6 @@
+rootProject.name = "TreasureBox"
 include ':base'
 include ':widget'
 include ':utils'
 include ':app'
-rootProject.name = "TreasureBox"
+include ':ocr'
