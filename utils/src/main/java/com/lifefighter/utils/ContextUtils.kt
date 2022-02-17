@@ -5,6 +5,7 @@ import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
+import android.graphics.Point
 import android.os.Build
 
 /**
@@ -27,6 +28,17 @@ fun Context.isMainProcess(): Boolean {
         }
     }
     return false
+}
+
+fun Context.getScreenRealSize(): Point {
+    val screenPoint = Point(1, 1)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        display?.getRealSize(screenPoint)
+    } else {
+        val display = getRootActivity()?.window?.windowManager?.defaultDisplay
+        display?.getRealSize(screenPoint)
+    }
+    return screenPoint
 }
 
 fun Context.getRootActivity(): Activity? {
