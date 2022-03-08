@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
 import android.annotation.TargetApi
 import android.graphics.Path
+import android.graphics.Point
 import android.os.Build
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
@@ -76,9 +77,14 @@ abstract class ExAccessibilityService : AccessibilityService(), CoroutineScope {
             bounds.top + bounds.height() / 4,
             bounds.bottom - bounds.height() / 4
         )
+        clickPoint(Point(pointX, pointY))
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    fun clickPoint(point: Point) {
         val path = Path()
-        path.moveTo(pointX.toFloat(), pointY.toFloat())
-        path.lineTo(pointX.toFloat(), pointY.toFloat())
+        path.moveTo(point.x.toFloat(), point.y.toFloat())
+        path.lineTo(point.x.toFloat(), point.y.toFloat())
         val desc =
             GestureDescription.Builder()
                 .addStroke(
