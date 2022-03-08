@@ -7,12 +7,12 @@ import kotlinx.coroutines.*
  * @created on 2020/10/23.
  */
 suspend fun <T> bg(block: suspend CoroutineScope.() -> T): T {
-    return withContext(Dispatchers.IO, block)
+    return withContext(Dispatchers.Default, block)
 }
 
 @Suppress("DeferredIsResult")
 inline fun <T> CoroutineScope.bgImmediately(crossinline block: suspend () -> T): Deferred<T> {
-    return async(Dispatchers.IO) { block() }
+    return async(Dispatchers.Default) { block() }
 }
 
 suspend fun <T> ui(block: suspend CoroutineScope.() -> T): T {
