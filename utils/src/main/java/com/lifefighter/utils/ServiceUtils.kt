@@ -131,31 +131,6 @@ class ServiceConnectionWithMessenger : ServiceConnection {
 }
 
 
-class MessengerBinder(lifecycleOwner: LifecycleOwner, callback: Handler.Callback) : Binder() {
-    private val mThread = HandlerThread("MessengerBinder-${nextThreadNum()}")
-    private var mHandler: Handler? = null
-
-    init {
-        lifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_CREATE) {
-                mThread.start()
-                mHandler = Handler(mThread.looper, callback)
-            } else if (event == Lifecycle.Event.ON_DESTROY) {
-                mHandler = null
-                mThread.quitSafely()
-            }
-        })
-    }
-
-    companion object {
-        var threadInitNumber = 0
-
-        @Synchronized
-        fun nextThreadNum(): Int {
-            return threadInitNumber++
-        }
-    }
-}
 
 class ServiceConnectionWithService : ServiceConnection {
     private var mChannel = Channel<Service>(Channel.CONFLATED)

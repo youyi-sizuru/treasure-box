@@ -9,13 +9,12 @@ import android.os.Build
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.CallSuper
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ServiceLifecycleDispatcher
+import androidx.lifecycle.coroutineScope
 import com.lifefighter.utils.getBoundsInScreen
-import com.lifefighter.utils.tryOrNothing
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
@@ -23,39 +22,31 @@ import kotlin.random.Random
  * @author xzp
  * @created on 2022/2/10.
  */
-abstract class ExAccessibilityService : AccessibilityService(), CoroutineScope {
-    private val mCoroutineContextRef = AtomicReference<CoroutineContext?>()
-    private var mInterrupt: Boolean = false
+abstract class ExAccessibilityService : AccessibilityService(), LifecycleOwner, CoroutineScope {
+    private val mDispatcher = ServiceLifecycleDispatcher(this)
+
+    override fun getLifecycle(): Lifecycle {
+        return mDispatcher.lifecycle
+    }
+
     override val coroutineContext: CoroutineContext
-        get() {
-            while (true) {
-                val existing = mCoroutineContextRef.get()
-                if (existing != null) {
-                    return existing
-                }
-                val newContext = SupervisorJob() + Dispatchers.Main.immediate
-                if (mInterrupt) {
-                    newContext.cancel()
-                }
-                if (mCoroutineContextRef.compareAndSet(null, newContext)) {
-                    return newContext
-                }
-            }
-        }
+        get() = lifecycle.coroutineScope.coroutineContext
+
+    override fun onCreate() {
+        mDispatcher.onServicePreSuperOnCreate()
+        super.onCreate()
+    }
 
     override fun onServiceConnected() {
-        mInterrupt = false
+        mDispatcher.onServicePreSuperOnStart()
         onStart()
     }
 
     override fun onInterrupt() {
+        mDispatcher.onServicePreSuperOnDestroy()
         onStop()
-        mInterrupt = true
-        tryOrNothing {
-            mCoroutineContextRef.get()?.cancel()
-            mCoroutineContextRef.lazySet(null)
-        }
     }
+
 
     open fun onStart() {}
     open fun onStop() {}

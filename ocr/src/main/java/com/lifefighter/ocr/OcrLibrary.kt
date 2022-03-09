@@ -2,6 +2,7 @@ package com.lifefighter.ocr
 
 import android.content.res.AssetManager
 import android.graphics.Bitmap
+import androidx.annotation.WorkerThread
 import com.lifefighter.utils.bg
 import com.lifefighter.utils.ui
 
@@ -12,15 +13,15 @@ object OcrLibrary {
         System.loadLibrary("ocrlibrary")
     }
 
-    suspend fun initLibrary(assetManager: AssetManager) = ui {
+    @WorkerThread
+    @Synchronized
+    fun initLibrary(assetManager: AssetManager): Boolean {
         if (mInited) {
-            return@ui true
+            return true
         }
-        val inited = bg {
-            init(assetManager)
-        }
+        val inited = init(assetManager)
         mInited = inited
-        return@ui inited
+        return inited
     }
 
     suspend fun detectBitmap(bitmap: Bitmap, useGpu: Boolean) = ui {
