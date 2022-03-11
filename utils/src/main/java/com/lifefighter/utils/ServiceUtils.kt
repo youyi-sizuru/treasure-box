@@ -7,13 +7,15 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.ServiceConnection
 import android.graphics.Rect
-import android.os.*
+import android.os.Binder
+import android.os.IBinder
+import android.os.Message
+import android.os.Messenger
 import android.view.accessibility.AccessibilityManager
 import android.view.accessibility.AccessibilityNodeInfo
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.channels.Channel
+import java.util.*
+import kotlin.collections.ArrayDeque
 import kotlin.reflect.KClass
 
 /**
@@ -117,8 +119,13 @@ fun AccessibilityNodeInfo.getBoundsInScreen(): Rect {
 
 class ServiceConnectionWithMessenger : ServiceConnection {
     private var mService: Messenger? = null
+    private val messageQueue = Collections.synchronizedList<Message>(mutableListOf())
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-        mService = Messenger(service)
+        mService = Messenger(service).also {
+            for (message in messageQueue) {
+                it.send(message)
+            }
+        }
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
@@ -126,10 +133,13 @@ class ServiceConnectionWithMessenger : ServiceConnection {
     }
 
     fun sendMessage(message: Message) {
-        mService?.send(message)
+        if (mService == null) {
+            messageQueue.add(message)
+        } else {
+            mService?.send(message)
+        }
     }
 }
-
 
 
 class ServiceConnectionWithService : ServiceConnection {

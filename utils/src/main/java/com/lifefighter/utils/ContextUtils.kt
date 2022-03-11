@@ -32,12 +32,9 @@ fun Context.isMainProcess(): Boolean {
 
 fun Context.getScreenRealSize(): Point {
     val screenPoint = Point(1, 1)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        display?.getRealSize(screenPoint)
-    } else {
-        val display = getRootActivity()?.window?.windowManager?.defaultDisplay
-        display?.getRealSize(screenPoint)
-    }
+    val display = resources.displayMetrics
+    screenPoint.x = display.widthPixels
+    screenPoint.y = display.heightPixels
     return screenPoint
 }
 

@@ -16,6 +16,7 @@ import androidx.lifecycle.coroutineScope
 import com.lifefighter.utils.getBoundsInScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlin.coroutines.CoroutineContext
+import kotlin.math.hypot
 import kotlin.random.Random
 
 /**
@@ -83,6 +84,25 @@ abstract class ExAccessibilityService : AccessibilityService(), LifecycleOwner, 
                         path,
                         Random.nextLong(1, 20),
                         Random.nextLong(1, 50)
+                    )
+                )
+                .build()
+        dispatchGesture(desc, null, null)
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    fun scrollTo(from: Point, to: Point) {
+        val path = Path()
+        path.moveTo(from.x.toFloat(), from.y.toFloat())
+        path.lineTo(to.x.toFloat(), to.y.toFloat())
+        val distance = hypot((to.x - from.x).toDouble(), (to.y - from.y).toDouble()).toInt()
+        val desc =
+            GestureDescription.Builder()
+                .addStroke(
+                    GestureDescription.StrokeDescription(
+                        path,
+                        Random.nextLong(1, 20),
+                        distance + Random.nextLong(1, 50)
                     )
                 )
                 .build()
