@@ -122,8 +122,11 @@ class ServiceConnectionWithMessenger : ServiceConnection {
     private val messageQueue = Collections.synchronizedList<Message>(mutableListOf())
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
         mService = Messenger(service).also {
-            for (message in messageQueue) {
-                it.send(message)
+            tryOrNothing {
+                while (true) {
+                    val message = messageQueue.removeAt(0)
+                    it.send(message)
+                }
             }
         }
     }
