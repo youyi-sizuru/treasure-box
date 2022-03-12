@@ -7,10 +7,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.ServiceConnection
 import android.graphics.Rect
-import android.os.Binder
-import android.os.IBinder
-import android.os.Message
-import android.os.Messenger
+import android.os.*
 import android.view.accessibility.AccessibilityManager
 import android.view.accessibility.AccessibilityNodeInfo
 import kotlinx.coroutines.channels.Channel
@@ -117,8 +114,9 @@ fun AccessibilityNodeInfo.getBoundsInScreen(): Rect {
     return bounds
 }
 
-class ServiceConnectionWithMessenger : ServiceConnection {
+class ServiceConnectionWithMessenger(callback: Handler.Callback? = null) : ServiceConnection {
     private var mService: Messenger? = null
+    private var mReceiver: Messenger = Messenger(Handler(Looper.getMainLooper(), callback))
     private val messageQueue = Collections.synchronizedList<Message>(mutableListOf())
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
         mService = Messenger(service).also {
@@ -136,6 +134,7 @@ class ServiceConnectionWithMessenger : ServiceConnection {
     }
 
     fun sendMessage(message: Message) {
+        message.replyTo = mReceiver
         if (mService == null) {
             messageQueue.add(message)
         } else {
