@@ -82,8 +82,8 @@ abstract class ExAccessibilityService : AccessibilityService(), LifecycleOwner, 
                 .addStroke(
                     GestureDescription.StrokeDescription(
                         path,
-                        Random.nextLong(1, 20),
-                        Random.nextLong(1, 50)
+                        50,
+                        50
                     )
                 )
                 .build()
