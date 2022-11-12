@@ -16,4 +16,28 @@ class ExWebView : WebView {
         attrs,
         defStyle
     )
+
+    init {
+        settings.apply {
+            javaScriptEnabled = true
+            loadWithOverviewMode = true
+            useWideViewPort = true
+            setSupportZoom(true)
+            builtInZoomControls = true
+            displayZoomControls = false
+            allowContentAccess = true
+            databaseEnabled = true
+            domStorageEnabled = true
+            setAppCacheEnabled(true)
+            savePassword = false
+            saveFormData = false
+            useWideViewPort = true
+        }
+    }
+
+    var userAgent: String?
+        set(value) {
+            settings.userAgentString = value
+        }
+        get() = settings.userAgentString
 }

@@ -4,6 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="dark">#FF333333</color>
     <color name="gray">#FF666666</color>
+    <color name="light">#FFCCCCCC</color>
     <color name="divider">#FFCCCCCC</color>
     <color name="transparent">#00FFFFFF</color>
 </resources>
