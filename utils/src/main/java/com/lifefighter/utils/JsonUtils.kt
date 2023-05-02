@@ -19,7 +19,7 @@ object JsonUtils {
     val gson = GsonBuilder().excludeFieldsWithModifiers(
         Modifier.STATIC,
         Modifier.TRANSIENT
-    ).create()
+    ).setLenient().create()
 
     fun newParameterizedType(
         rawType: Type,
